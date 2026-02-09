@@ -16,31 +16,68 @@ body {
   overflow: hidden;
 }
 
+/* CONTENEDOR */
+.contenedor {
+  position: relative;
+  width: 280px;
+  height: 220px;
+}
+
+/* SOBRE */
+.sobre {
+  width: 100%;
+  height: 180px;
+  background: #f4a3c2;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 0;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+/* MOÑO */
+.mono {
+  font-size: 32px;
+}
+
+/* CARTA */
 .carta {
   width: 260px;
-  height: 180px;
+  height: 170px;
   background: white;
   border-radius: 12px;
-  position: relative;
-  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  transition: transform 1s;
+  transform: translateY(0);
+  transition: transform 1s, opacity 1s;
+  opacity: 0;
+  z-index: 1;
 }
 
+/* CARTA ABIERTA */
 .carta.abierta {
-  transform: rotateY(360deg);
+  transform: translateY(-200px) rotateY(360deg);
+  opacity: 1;
 }
 
+/* TEXTO */
 .texto {
   font-size: 18px;
   color: #444;
 }
 
+/* CORAZONES */
 .corazon {
   position: absolute;
   font-size: 20px;
@@ -62,22 +99,33 @@ body {
 
 <body>
 
-<div class="carta" onclick="abrirCarta()">
-  <div class="texto">
-    Qué hermosa estás 🤍<br>
-    no te miré pero yo sé que sí
+<div class="contenedor">
+  <div class="carta" id="carta">
+    <div class="texto">
+  Qué bella estás 🤍<br>
+  no te miré pero sé que lo estás<br>
+  ojitos dormilones 🫶🏻
+</div>
+      
+             
+    
+  </div>
+
+  <div class="sobre" onclick="abrirSobre()">
+    <div class="mono">🎀</div>
   </div>
 </div>
 
 <script>
-function abrirCarta() {
-  const carta = document.querySelector('.carta');
+function abrirSobre() {
+  const carta = document.getElementById('carta');
   carta.classList.toggle('abierta');
 
   for (let i = 0; i < 20; i++) {
     const corazon = document.createElement('div');
     corazon.className = 'corazon';
-    corazon.innerHTML = Math.random() > 0.5 ? '🤍' : '❤️';
+    const elementos = ['🤍', '❤️', '🍰', '🍓', '🥣'];
+corazon.innerHTML = elementos[Math.floor(Math.random() * elementos.length)];
     corazon.style.left = Math.random() * window.innerWidth + 'px';
     corazon.style.top = Math.random() * window.innerHeight + 'px';
     document.body.appendChild(corazon);
