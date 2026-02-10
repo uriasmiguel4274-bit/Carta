@@ -20,7 +20,7 @@ body {
 .contenedor {
   position: relative;
   width: 280px;
-  height: 220px;
+  height: 260px;
 }
 
 /* SOBRE */
@@ -28,7 +28,7 @@ body {
   width: 100%;
   height: 180px;
   background: #f4a3c2;
-  border-radius: 10px;
+  border-radius: 12px;
   position: absolute;
   bottom: 0;
   cursor: pointer;
@@ -41,15 +41,22 @@ body {
 
 /* MOÑO */
 .mono {
-  font-size: 32px;
+  font-size: 34px;
+  animation: latido 1.5s infinite;
+}
+
+@keyframes latido {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 /* CARTA */
 .carta {
   width: 260px;
-  height: 170px;
+  height: 180px;
   background: white;
-  border-radius: 12px;
+  border-radius: 14px;
   position: absolute;
   bottom: 10px;
   left: 10px;
@@ -60,14 +67,14 @@ body {
   padding: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   transform: translateY(0);
-  transition: transform 1s, opacity 1s;
+  transition: transform 1s ease, opacity 1s ease;
   opacity: 0;
   z-index: 1;
 }
 
 /* CARTA ABIERTA */
 .carta.abierta {
-  transform: translateY(-200px) rotateY(360deg);
+  transform: translateY(-210px) rotateY(360deg);
   opacity: 1;
 }
 
@@ -75,13 +82,15 @@ body {
 .texto {
   font-size: 18px;
   color: #444;
+  line-height: 1.4;
 }
 
-/* CORAZONES */
+/* CORAZONES Y POSTRES */
 .corazon {
   position: absolute;
   font-size: 20px;
   animation: flotar 2s ease-out forwards;
+  pointer-events: none;
 }
 
 @keyframes flotar {
@@ -101,14 +110,7 @@ body {
 
 <div class="contenedor">
   <div class="carta" id="carta">
-    <div class="texto">
-  Qué bella estás 🤍<br>
-  no te miré pero sé que lo estás<br>
-  ojitos dormilones 🫶🏻
-</div>
-      
-             
-    
+    <div class="texto" id="mensaje"></div>
   </div>
 
   <div class="sobre" onclick="abrirSobre()">
@@ -117,22 +119,40 @@ body {
 </div>
 
 <script>
+let abierta = false;
+const texto = "Qué bella estás 🤍\nno te miré pero sé que lo estás\nojitos dormilones 🫶🏻";
+let i = 0;
+
+function escribirTexto() {
+  if (i < texto.length) {
+    document.getElementById("mensaje").innerHTML += 
+      texto[i] === "\n" ? "<br>" : texto[i];
+    i++;
+    setTimeout(escribirTexto, 60);
+  }
+}
+
 function abrirSobre() {
+  if (abierta) return;
+  abierta = true;
+
   const carta = document.getElementById('carta');
-  carta.classList.toggle('abierta');
+  carta.classList.add('abierta');
+  escribirTexto();
 
-  for (let i = 0; i < 20; i++) {
-    const corazon = document.createElement('div');
-    corazon.className = 'corazon';
-    const elementos = ['🤍', '❤️', '🍰', '🍓', '🥣'];
-corazon.innerHTML = elementos[Math.floor(Math.random() * elementos.length)];
-    corazon.style.left = Math.random() * window.innerWidth + 'px';
-    corazon.style.top = Math.random() * window.innerHeight + 'px';
-    document.body.appendChild(corazon);
+  const sobre = document.querySelector('.sobre');
+  const rect = sobre.getBoundingClientRect();
 
-    setTimeout(() => {
-      corazon.remove();
-    }, 2000);
+  for (let j = 0; j < 25; j++) {
+    const item = document.createElement('div');
+    item.className = 'corazon';
+    const elementos = ['🤍','❤️','🍰','🍓','🥣'];
+    item.innerHTML = elementos[Math.floor(Math.random()*elementos.length)];
+    item.style.left = rect.left + rect.width / 2 + 'px';
+    item.style.top = rect.top + 'px';
+    document.body.appendChild(item);
+
+    setTimeout(() => item.remove(), 2000);
   }
 }
 </script>
