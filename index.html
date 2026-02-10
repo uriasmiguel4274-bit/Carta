@@ -2,158 +2,240 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Para ti 🤍</title>
+<title>Para ti 💖</title>
 
 <style>
 body {
   margin: 0;
   height: 100vh;
-  background: linear-gradient(135deg, #ffd6e8, #ffeef5);
+  background: #ffb6c1;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Georgia', serif;
+  font-family: Arial, sans-serif;
   overflow: hidden;
 }
 
 /* CONTENEDOR */
-.contenedor {
+.container {
   position: relative;
-  width: 280px;
-  height: 260px;
+  text-align: center;
+}
+
+/* BOTONES */
+.buttons {
+  margin-bottom: 15px;
+}
+
+button {
+  background: #ff4081;
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+button:active {
+  transform: scale(0.95);
 }
 
 /* SOBRE */
-.sobre {
-  width: 100%;
-  height: 180px;
-  background: #f4a3c2;
-  border-radius: 12px;
-  position: absolute;
-  bottom: 0;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-}
-
-/* MOÑO */
-.mono {
-  font-size: 34px;
-  animation: latido 1.5s infinite;
-}
-
-@keyframes latido {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.12); }
-  100% { transform: scale(1); }
-}
-
-/* CARTA */
-.carta {
+.envelope {
   width: 260px;
-  height: 180px;
-  background: white;
-  border-radius: 14px;
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
+  height: 170px;
+  background: #f7a1b5;
+  border-radius: 6px;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  transform: translateY(0);
-  transition: transform 1s ease, opacity 1s ease;
-  opacity: 0;
-  z-index: 1;
 }
 
-/* CARTA ABIERTA */
-.carta.abierta {
-  transform: translateY(-210px) rotateY(360deg);
-  opacity: 1;
+.envelope::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  border-left: 130px solid transparent;
+  border-right: 130px solid transparent;
+  border-top: 85px solid #f48fb1;
 }
 
 /* TEXTO */
-.texto {
-  font-size: 18px;
-  color: #444;
-  line-height: 1.4;
-}
-
-/* CORAZONES Y POSTRES */
-.corazon {
+.text {
   position: absolute;
-  font-size: 20px;
-  animation: flotar 2s ease-out forwards;
-  pointer-events: none;
+  bottom: 15px;
+  color: white;
+  font-weight: bold;
 }
 
-@keyframes flotar {
-  0% {
-    opacity: 1;
+/* MOÑO */
+.bow {
+  position: absolute;
+  top: -30px;
+  width: 50px;
+  height: 30px;
+  background: #ff4081;
+  border-radius: 6px;
+  animation: wiggle 1s infinite;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(6deg); }
+  50% { transform: rotate(0); }
+  75% { transform: rotate(-6deg); }
+  100% { transform: rotate(0); }
+}
+
+/* CARTA */
+.letter {
+  width: 230px;
+  height: 140px;
+  background: white;
+  border-radius: 6px;
+  padding: 15px;
+  text-align: center;
+  font-size: 15px;
+  position: absolute;
+  bottom: 10px;
+  display: none;
+  cursor: pointer;
+  transition: transform 0.6s;
+}
+
+.letter.show {
+  display: block;
+  transform: translateY(-160px);
+}
+
+/* CORAZONES Y FRESAS */
+.floating {
+  position: absolute;
+  font-size: 26px;
+  animation: rise 5s linear forwards;
+  cursor: pointer;
+  user-select: none;
+}
+
+@keyframes rise {
+  from {
     transform: translateY(0) scale(1);
+    opacity: 1;
   }
-  100% {
-    opacity: 0;
-    transform: translateY(-120px) scale(1.5);
+  to {
+    transform: translateY(-110vh) scale(1.3);
+    opacity: 0.9;
   }
+}
+
+.pop {
+  animation: explode 0.3s forwards;
+}
+
+@keyframes explode {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(2); opacity: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="contenedor">
-  <div class="carta" id="carta">
-    <div class="texto" id="mensaje"></div>
+<div class="container">
+
+  <div class="buttons">
+    <button onclick="openLetter()">Abrir 💌</button>
+    <button onclick="closeLetter()">Cerrar 💕</button>
   </div>
 
-  <div class="sobre" onclick="abrirSobre()">
-    <div class="mono">🎀</div>
+  <div class="envelope">
+    <div class="bow"></div>
+    <div class="text">Para ti</div>
+  </div>
+
+  <div class="letter" id="letter">
+    💌<br><br>
+    Que bella estás,<br>
+    no te miré pero sé que lo estás<br>
+    ojitos lindos 🫶🏻
   </div>
 </div>
 
 <script>
-let abierta = false;
-const texto = "Qué bella estás 🤍\nno te miré pero sé que lo estás\nojitos dormilones 🫶🏻";
-let i = 0;
+let opened = false;
+let intervalLove = null;
 
-function escribirTexto() {
-  if (i < texto.length) {
-    document.getElementById("mensaje").innerHTML += 
-      texto[i] === "\n" ? "<br>" : texto[i];
-    i++;
-    setTimeout(escribirTexto, 60);
-  }
+/* ABRIR */
+function openLetter() {
+  if (opened) return;
+  const letter = document.getElementById("letter");
+  letter.classList.add("show");
+  letter.style.display = "block";
+  startInfiniteLove();
+  opened = true;
 }
 
-function abrirSobre() {
-  if (abierta) return;
-  abierta = true;
+/* CERRAR */
+function closeLetter() {
+  const letter = document.getElementById("letter");
+  letter.classList.remove("show");
+  setTimeout(() => {
+    letter.style.display = "none";
+  }, 300);
+  stopInfiniteLove();
+  opened = false;
+}
 
-  const carta = document.getElementById('carta');
-  carta.classList.add('abierta');
-  escribirTexto();
+/* INFINITO */
+function startInfiniteLove() {
+  if (intervalLove) return;
+  intervalLove = setInterval(createLove, 300);
+}
 
-  const sobre = document.querySelector('.sobre');
-  const rect = sobre.getBoundingClientRect();
+function stopInfiniteLove() {
+  clearInterval(intervalLove);
+  intervalLove = null;
+}
 
-  for (let j = 0; j < 25; j++) {
-    const item = document.createElement('div');
-    item.className = 'corazon';
-    const elementos = ['🤍','❤️','🍰','🍓','🥣'];
-    item.innerHTML = elementos[Math.floor(Math.random()*elementos.length)];
-    item.style.left = rect.left + rect.width / 2 + 'px';
-    item.style.top = rect.top + 'px';
-    document.body.appendChild(item);
+/* CREAR ICONOS */
+function createLove() {
+  const icon = document.createElement("div");
+  icon.className = "floating";
+  icon.innerHTML = Math.random() > 0.5 ? "💖" : "🍓";
+  icon.style.left = Math.random() * window.innerWidth + "px";
+  icon.style.bottom = "-30px";
+  icon.onclick = () => pop(icon);
+  document.body.appendChild(icon);
+  setTimeout(() => icon.remove(), 5000);
+}
 
-    setTimeout(() => item.remove(), 2000);
-  }
+/* EXPLOTAR */
+function pop(icon) {
+  playPopSound();
+  icon.classList.add("pop");
+  setTimeout(() => icon.remove(), 300);
+}
+
+/* SONIDO */
+function playPopSound() {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+
+  gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+  oscillator.connect(gain);
+  gain.connect(audioCtx.destination);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.15);
 }
 </script>
 
